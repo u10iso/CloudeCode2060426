@@ -3,7 +3,11 @@ node_modules/
 *.log
 .env
 .env.local
+.env.*
 .vscode/
 .idea/
 dist/
 build/
+
+# Supabase credentials — local only, never commit
+config.js

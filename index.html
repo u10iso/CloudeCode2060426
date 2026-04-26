@@ -1,94 +1,61 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alarm & Stopwatch</title>
+    <title>Tsubuyaki</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div class="weather-card" id="weatherCard">
-            <div class="weather-main">
-                <div class="weather-temp" id="weatherTemp">--°</div>
-                <div class="weather-info">
-                    <div class="weather-desc" id="weatherDesc">--</div>
-                    <div class="weather-location" id="weatherLocation">--</div>
+    <header class="topbar">
+        <h1 class="brand">Tsubuyaki</h1>
+        <div id="userArea" class="user-area hidden">
+            <span id="userEmail" class="user-email"></span>
+            <button id="signOutBtn" class="btn btn-ghost">Sign out</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="authView" class="card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-mode="signin">Sign in</button>
+                <button class="auth-tab" data-mode="signup">Sign up</button>
+            </div>
+            <form id="authForm" class="auth-form">
+                <label>
+                    <span>Email</span>
+                    <input type="email" id="authEmail" required autocomplete="email">
+                </label>
+                <label>
+                    <span>Password</span>
+                    <input type="password" id="authPassword" required minlength="6" autocomplete="current-password">
+                </label>
+                <button type="submit" id="authSubmit" class="btn btn-primary">Sign in</button>
+                <p id="authMessage" class="message" role="status"></p>
+            </form>
+        </section>
+
+        <section id="appView" class="hidden">
+            <form id="postForm" class="card composer">
+                <textarea id="postContent" maxlength="280" placeholder="いまどうしてる?" rows="3" required></textarea>
+                <div class="composer-footer">
+                    <span id="charCount" class="char-count">0 / 280</span>
+                    <button type="submit" id="postSubmit" class="btn btn-primary">Post</button>
                 </div>
+            </form>
+
+            <div class="timeline-header">
+                <h2>Timeline</h2>
+                <button id="refreshBtn" class="btn btn-ghost">Refresh</button>
             </div>
-        </div>
+            <ul id="timeline" class="timeline">
+                <li class="empty">読み込み中...</li>
+            </ul>
+        </section>
+    </main>
 
-        <h1>Alarm & Stopwatch</h1>
-
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="alarm">Alarm</button>
-            <button class="tab-btn" data-tab="stopwatch">Stopwatch</button>
-            <button class="tab-btn" data-tab="pokemon">Pokemon</button>
-        </div>
-
-        <div id="alarm" class="tab-content active">
-            <div class="alarm-setup">
-                <div class="input-group">
-                    <label for="alarmTime">Time</label>
-                    <input type="time" id="alarmTime">
-                </div>
-                <button id="setBtn" class="btn btn-primary">Set Alarm</button>
-            </div>
-
-            <div class="alarms-list">
-                <h2>Alarms</h2>
-                <ul id="alarmsList" class="list">
-                    <li class="empty">No alarms set</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="stopwatch" class="tab-content">
-            <div class="stopwatch-display">
-                <div class="time-display" id="stopwatchTime">00:00:00</div>
-            </div>
-
-            <div class="stopwatch-controls">
-                <button id="startBtn" class="btn btn-primary">Start</button>
-                <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
-                <button id="resetBtn" class="btn btn-danger">Reset</button>
-            </div>
-
-            <div class="laps">
-                <h2>Laps</h2>
-                <button id="lapBtn" class="btn btn-secondary" disabled>Record Lap</button>
-                <ul id="lapsList" class="list">
-                    <li class="empty">No laps recorded</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="pokemon" class="tab-content">
-            <div class="pokemon-card">
-                <div class="pokemon-image" id="pokemonImage"></div>
-                <div class="pokemon-info">
-                    <h2 id="pokemonName">--</h2>
-                    <div class="pokemon-types" id="pokemonTypes"></div>
-                    <div class="pokemon-stats">
-                        <div class="stat">
-                            <span class="stat-name">Height</span>
-                            <span class="stat-value" id="pokemonHeight">--</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-name">Weight</span>
-                            <span class="stat-value" id="pokemonWeight">--</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <button id="randomBtn" class="btn btn-primary">Random Pokemon</button>
-        </div>
-    </div>
-
-    <audio id="alarmSound" preload="auto">
-        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
-    </audio>
-
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

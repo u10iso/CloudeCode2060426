@@ -2,11 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "alarm-app",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server"],
-      "port": 8000,
-      "autoPort": true
+      "name": "tsubuyaki",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\npx.cmd",
+      "runtimeArgs": ["--yes", "serve", "-l", "8123", "."],
+      "port": 8123,
+      "autoPort": false
     }
   ]
 }

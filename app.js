@@ -1,315 +1,214 @@
-class AlarmApp {
-    constructor() {
-        this.alarms = [];
-        this.intervals = [];
-        this.alarmSound = document.getElementById('alarmSound');
-        this.timeInput = document.getElementById('alarmTime');
-        this.setBtn = document.getElementById('setBtn');
-        this.alarmsList = document.getElementById('alarmsList');
-
-        this.setBtn.addEventListener('click', () => this.addAlarm());
-        this.timeInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.addAlarm();
-        });
-
-        this.loadAlarms();
-        this.startTimeCheck();
+(function () {
+    const cfg = window.SUPABASE_CONFIG;
+    if (!cfg || !cfg.url || !cfg.anonKey || cfg.url.includes("YOUR_")) {
+        document.body.innerHTML =
+            '<div style="max-width:560px;margin:60px auto;padding:24px;font-family:sans-serif;border:1px solid #e1e8ed;border-radius:12px;background:#fff;">' +
+            '<h2>Setup required</h2>' +
+            '<p>Copy <code>config.example.js</code> to <code>config.js</code> and fill in your Supabase project URL and anon key. See <code>README.md</code> for details.</p>' +
+            "</div>";
+        return;
     }
 
-    addAlarm() {
-        const time = this.timeInput.value;
-        if (!time) {
-            alert('Please select a time');
-            return;
-        }
+    const supabase = window.supabase.createClient(cfg.url, cfg.anonKey);
 
-        const alarm = {
-            id: Date.now(),
-            time: time,
-            enabled: true
-        };
+    const authView = document.getElementById("authView");
+    const appView = document.getElementById("appView");
+    const userArea = document.getElementById("userArea");
+    const userEmail = document.getElementById("userEmail");
+    const signOutBtn = document.getElementById("signOutBtn");
 
-        this.alarms.push(alarm);
-        this.saveAlarms();
-        this.render();
-        this.timeInput.value = '';
-    }
+    const authForm = document.getElementById("authForm");
+    const authEmail = document.getElementById("authEmail");
+    const authPassword = document.getElementById("authPassword");
+    const authSubmit = document.getElementById("authSubmit");
+    const authMessage = document.getElementById("authMessage");
+    const authTabs = document.querySelectorAll(".auth-tab");
 
-    deleteAlarm(id) {
-        this.alarms = this.alarms.filter(alarm => alarm.id !== id);
-        this.saveAlarms();
-        this.render();
-    }
+    const postForm = document.getElementById("postForm");
+    const postContent = document.getElementById("postContent");
+    const postSubmit = document.getElementById("postSubmit");
+    const charCount = document.getElementById("charCount");
+    const timeline = document.getElementById("timeline");
+    const refreshBtn = document.getElementById("refreshBtn");
 
-    startTimeCheck() {
-        setInterval(() => {
-            const now = new Date();
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    let mode = "signin";
+    let currentUser = null;
 
-            this.alarms.forEach(alarm => {
-                if (alarm.enabled && alarm.time === currentTime) {
-                    this.triggerAlarm(alarm.id);
-                }
-            });
-        }, 1000);
-    }
-
-    triggerAlarm(id) {
-        const alarm = this.alarms.find(a => a.id === id);
-        if (!alarm) return;
-
-        alarm.enabled = false;
-        this.saveAlarms();
-        this.render();
-
-        this.playSound();
-        this.showNotification();
-    }
-
-    playSound() {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-
-        oscillator.frequency.value = 800;
-        oscillator.type = 'sine';
-
-        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
-
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 1);
-    }
-
-    showNotification() {
-        if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Alarm', {
-                body: 'Your alarm is ringing'
-            });
-        }
-    }
-
-    saveAlarms() {
-        localStorage.setItem('alarms', JSON.stringify(this.alarms));
-    }
-
-    loadAlarms() {
-        const saved = localStorage.getItem('alarms');
-        if (saved) {
-            this.alarms = JSON.parse(saved);
-        }
-    }
-
-    render() {
-        if (this.alarms.length === 0) {
-            this.alarmsList.innerHTML = '<li class="empty">No alarms set</li>';
-            return;
-        }
-
-        const sorted = [...this.alarms].sort((a, b) => a.time.localeCompare(b.time));
-
-        this.alarmsList.innerHTML = sorted.map(alarm => `
-            <li class="list-item">
-                <div class="alarm-time">${alarm.time}</div>
-                <div class="alarm-status">${alarm.enabled ? 'Active' : 'Done'}</div>
-                <button class="btn btn-delete" onclick="app.deleteAlarm(${alarm.id})">Delete</button>
-            </li>
-        `).join('');
-    }
-}
-
-class Stopwatch {
-    constructor() {
-        this.startTime = 0;
-        this.elapsedTime = 0;
-        this.running = false;
-        this.laps = [];
-        this.intervalId = null;
-
-        this.display = document.getElementById('stopwatchTime');
-        this.startBtn = document.getElementById('startBtn');
-        this.pauseBtn = document.getElementById('pauseBtn');
-        this.resetBtn = document.getElementById('resetBtn');
-        this.lapBtn = document.getElementById('lapBtn');
-        this.lapsList = document.getElementById('lapsList');
-
-        this.startBtn.addEventListener('click', () => this.start());
-        this.pauseBtn.addEventListener('click', () => this.pause());
-        this.resetBtn.addEventListener('click', () => this.reset());
-        this.lapBtn.addEventListener('click', () => this.recordLap());
-    }
-
-    start() {
-        if (this.running) return;
-        this.running = true;
-        this.startTime = Date.now() - this.elapsedTime;
-
-        this.startBtn.disabled = true;
-        this.pauseBtn.disabled = false;
-        this.lapBtn.disabled = false;
-
-        this.intervalId = setInterval(() => this.updateDisplay(), 10);
-    }
-
-    pause() {
-        this.running = false;
-        clearInterval(this.intervalId);
-
-        this.startBtn.disabled = false;
-        this.pauseBtn.disabled = true;
-        this.lapBtn.disabled = true;
-    }
-
-    reset() {
-        this.running = false;
-        clearInterval(this.intervalId);
-        this.elapsedTime = 0;
-        this.laps = [];
-        this.display.textContent = '00:00:00';
-        this.lapsList.innerHTML = '<li class="empty">No laps recorded</li>';
-
-        this.startBtn.disabled = false;
-        this.pauseBtn.disabled = true;
-        this.lapBtn.disabled = true;
-    }
-
-    recordLap() {
-        const lapTime = this.elapsedTime;
-        this.laps.push(lapTime);
-        this.renderLaps();
-    }
-
-    updateDisplay() {
-        this.elapsedTime = Date.now() - this.startTime;
-        const totalSeconds = Math.floor(this.elapsedTime / 1000);
-        const hours = Math.floor(totalSeconds / 3600);
-        const minutes = Math.floor((totalSeconds % 3600) / 60);
-        const seconds = totalSeconds % 60;
-
-        this.display.textContent =
-            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-    }
-
-    renderLaps() {
-        if (this.laps.length === 0) {
-            this.lapsList.innerHTML = '<li class="empty">No laps recorded</li>';
-            return;
-        }
-
-        this.lapsList.innerHTML = this.laps.map((lap, index) => {
-            const totalSeconds = Math.floor(lap / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            return `<li class="list-item"><div>Lap ${index + 1}</div><div class="alarm-time">${time}</div></li>`;
-        }).join('');
-    }
-}
-
-function setupTabs() {
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
-
-            btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.add('active');
+    authTabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+            authTabs.forEach((t) => t.classList.remove("active"));
+            tab.classList.add("active");
+            mode = tab.dataset.mode;
+            authSubmit.textContent = mode === "signin" ? "Sign in" : "Create account";
+            setMessage("", null);
         });
     });
-}
 
-class Weather {
-    constructor() {
-        this.apiKey = '85a4e3c55f3ee4e2a61843a75fa3ff3b';
-        this.tempEl = document.getElementById('weatherTemp');
-        this.descEl = document.getElementById('weatherDesc');
-        this.locationEl = document.getElementById('weatherLocation');
-        this.init();
-    }
+    authForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        authSubmit.disabled = true;
+        setMessage("処理中...", null);
 
-    init() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => this.fetchWeather(position.coords.latitude, position.coords.longitude),
-                () => this.fetchWeather(35.6762, 139.6503)
-            );
-        } else {
-            this.fetchWeather(35.6762, 139.6503);
+        const email = authEmail.value.trim();
+        const password = authPassword.value;
+
+        try {
+            if (mode === "signin") {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+            } else {
+                const { data, error } = await supabase.auth.signUp({ email, password });
+                if (error) throw error;
+                if (!data.session) {
+                    setMessage("確認メールを送信しました。リンクを開いてからサインインしてください。", "success");
+                    authSubmit.disabled = false;
+                    return;
+                }
+            }
+        } catch (err) {
+            setMessage(err.message || "サインインに失敗しました", "error");
+            authSubmit.disabled = false;
         }
-    }
+    });
 
-    fetchWeather(lat, lon) {
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`;
+    signOutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+    });
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => this.displayWeather(data))
-            .catch(error => console.error('Weather fetch error:', error));
-    }
+    postContent.addEventListener("input", () => {
+        const len = postContent.value.length;
+        charCount.textContent = `${len} / 280`;
+        charCount.classList.toggle("over", len > 280);
+        postSubmit.disabled = len === 0 || len > 280;
+    });
 
-    displayWeather(data) {
-        if (!data || !data.main || !data.weather) {
+    postForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const content = postContent.value.trim();
+        if (!content || !currentUser) return;
+
+        postSubmit.disabled = true;
+        const { error } = await supabase
+            .from("posts")
+            .insert({ content, user_id: currentUser.id, author_email: currentUser.email });
+
+        if (error) {
+            alert("投稿に失敗しました: " + error.message);
+            postSubmit.disabled = false;
             return;
         }
-        const temp = Math.round(data.main.temp);
-        const desc = data.weather[0].main;
-        const location = data.name;
 
-        this.tempEl.textContent = `${temp}°`;
-        this.descEl.textContent = desc;
-        this.locationEl.textContent = location;
+        postContent.value = "";
+        charCount.textContent = "0 / 280";
+        await loadTimeline();
+        postSubmit.disabled = false;
+    });
+
+    refreshBtn.addEventListener("click", loadTimeline);
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+        applySession(session);
+    });
+
+    supabase.auth.getSession().then(({ data }) => applySession(data.session));
+
+    function applySession(session) {
+        currentUser = session?.user ?? null;
+        if (currentUser) {
+            authView.classList.add("hidden");
+            appView.classList.remove("hidden");
+            userArea.classList.remove("hidden");
+            userEmail.textContent = currentUser.email;
+            authForm.reset();
+            setMessage("", null);
+            loadTimeline();
+        } else {
+            authView.classList.remove("hidden");
+            appView.classList.add("hidden");
+            userArea.classList.add("hidden");
+            userEmail.textContent = "";
+            authSubmit.disabled = false;
+        }
     }
-}
 
-if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-}
+    async function loadTimeline() {
+        timeline.innerHTML = '<li class="empty">読み込み中...</li>';
+        const { data, error } = await supabase
+            .from("posts")
+            .select("id, content, created_at, user_id, author_email")
+            .order("created_at", { ascending: false })
+            .limit(100);
 
-class Pokemon {
-    constructor() {
-        this.randomBtn = document.getElementById('randomBtn');
-        this.nameEl = document.getElementById('pokemonName');
-        this.imageEl = document.getElementById('pokemonImage');
-        this.typesEl = document.getElementById('pokemonTypes');
-        this.heightEl = document.getElementById('pokemonHeight');
-        this.weightEl = document.getElementById('pokemonWeight');
+        if (error) {
+            timeline.innerHTML = `<li class="empty">読み込みに失敗しました: ${escapeHtml(error.message)}</li>`;
+            return;
+        }
+        if (!data || data.length === 0) {
+            timeline.innerHTML = '<li class="empty">まだ投稿がありません</li>';
+            return;
+        }
 
-        this.randomBtn.addEventListener('click', () => this.fetchRandomPokemon());
-        this.fetchRandomPokemon();
+        timeline.innerHTML = data.map(renderTweet).join("");
+        timeline.querySelectorAll("[data-delete]").forEach((btn) => {
+            btn.addEventListener("click", () => deletePost(btn.dataset.delete));
+        });
     }
 
-    fetchRandomPokemon() {
-        const randomId = Math.floor(Math.random() * 898) + 1;
-        fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
-            .then(response => response.json())
-            .then(data => this.displayPokemon(data))
-            .catch(error => console.error('Pokemon fetch error:', error));
+    function renderTweet(post) {
+        const isMine = currentUser && post.user_id === currentUser.id;
+        const author = post.author_email || "anonymous";
+        const time = formatTime(post.created_at);
+        const deleteBtn = isMine
+            ? `<div class="tweet-actions"><button class="tweet-delete" data-delete="${post.id}">Delete</button></div>`
+            : "";
+        return `
+            <li class="tweet">
+                <div class="tweet-header">
+                    <span class="tweet-author">${escapeHtml(author)}</span>
+                    <span>${time}</span>
+                </div>
+                <div class="tweet-content">${escapeHtml(post.content)}</div>
+                ${deleteBtn}
+            </li>
+        `;
     }
 
-    displayPokemon(data) {
-        const name = data.name;
-        const image = data.sprites['official-artwork']?.front_default || data.sprites.front_default;
-        const types = data.types.map(t => t.type.name);
-        const height = (data.height / 10).toFixed(1) + ' m';
-        const weight = (data.weight / 10).toFixed(1) + ' kg';
-
-        this.nameEl.textContent = name;
-        this.imageEl.innerHTML = `<img src="${image}" alt="${name}">`;
-        this.typesEl.innerHTML = types.map(type => `<span class="pokemon-type">${type}</span>`).join('');
-        this.heightEl.textContent = height;
-        this.weightEl.textContent = weight;
+    async function deletePost(id) {
+        if (!confirm("この投稿を削除しますか?")) return;
+        const { error } = await supabase.from("posts").delete().eq("id", id);
+        if (error) {
+            alert("削除に失敗しました: " + error.message);
+            return;
+        }
+        await loadTimeline();
     }
-}
 
-const app = new AlarmApp();
-const stopwatch = new Stopwatch();
-const weather = new Weather();
-const pokemon = new Pokemon();
-setupTabs();
+    function setMessage(text, kind) {
+        authMessage.textContent = text;
+        authMessage.classList.remove("error", "success");
+        if (kind) authMessage.classList.add(kind);
+    }
+
+    function formatTime(iso) {
+        const d = new Date(iso);
+        const now = new Date();
+        const diffMs = now - d;
+        const diffSec = Math.floor(diffMs / 1000);
+        if (diffSec < 60) return `${diffSec}秒前`;
+        const diffMin = Math.floor(diffSec / 60);
+        if (diffMin < 60) return `${diffMin}分前`;
+        const diffH = Math.floor(diffMin / 60);
+        if (diffH < 24) return `${diffH}時間前`;
+        return d.toLocaleString();
+    }
+
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, (c) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+        })[c]);
+    }
+})();
