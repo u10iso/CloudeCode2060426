@@ -225,10 +225,51 @@ function setupTabs() {
     });
 }
 
+class Weather {
+    constructor() {
+        this.apiKey = '85a4e3c55f3ee4e2a61843a75fa3ff3b';
+        this.tempEl = document.getElementById('weatherTemp');
+        this.descEl = document.getElementById('weatherDesc');
+        this.locationEl = document.getElementById('weatherLocation');
+        this.init();
+    }
+
+    init() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => this.fetchWeather(position.coords.latitude, position.coords.longitude),
+                () => this.fetchWeather(35.6762, 139.6503)
+            );
+        } else {
+            this.fetchWeather(35.6762, 139.6503);
+        }
+    }
+
+    fetchWeather(lat, lon) {
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => this.displayWeather(data))
+            .catch(error => console.error('Weather fetch error:', error));
+    }
+
+    displayWeather(data) {
+        const temp = Math.round(data.main.temp);
+        const desc = data.weather[0].main;
+        const location = data.name;
+
+        this.tempEl.textContent = `${temp}°`;
+        this.descEl.textContent = desc;
+        this.locationEl.textContent = location;
+    }
+}
+
 if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
 }
 
 const app = new AlarmApp();
 const stopwatch = new Stopwatch();
+const weather = new Weather();
 setupTabs();
