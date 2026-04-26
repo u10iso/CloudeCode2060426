@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>シンプルアラームアプリ</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ アラーム</h1>
+
+        <div class="alarm-setup">
+            <div class="input-group">
+                <label for="alarmTime">時刻を選択:</label>
+                <input type="time" id="alarmTime">
+            </div>
+            <button id="setBtn" class="btn btn-primary">アラームを設定</button>
+        </div>
+
+        <div class="alarms-list">
+            <h2>設定済みアラーム</h2>
+            <ul id="alarmsList" class="list">
+                <li class="empty">アラームはまだ設定されていません</li>
+            </ul>
+        </div>
+    </div>
+
+    <audio id="alarmSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==" type="audio/wav">
+    </audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
