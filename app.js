@@ -255,6 +255,9 @@ class Weather {
     }
 
     displayWeather(data) {
+        if (!data || !data.main || !data.weather) {
+            return;
+        }
         const temp = Math.round(data.main.temp);
         const desc = data.weather[0].main;
         const location = data.name;
@@ -292,7 +295,7 @@ class Pokemon {
 
     displayPokemon(data) {
         const name = data.name;
-        const image = data.sprites.official-artwork?.front_default || data.sprites.front_default;
+        const image = data.sprites['official-artwork']?.front_default || data.sprites.front_default;
         const types = data.types.map(t => t.type.name);
         const height = (data.height / 10).toFixed(1) + ' m';
         const weight = (data.weight / 10).toFixed(1) + ' kg';
