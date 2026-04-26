@@ -122,8 +122,114 @@ class AlarmApp {
     }
 }
 
+class Stopwatch {
+    constructor() {
+        this.startTime = 0;
+        this.elapsedTime = 0;
+        this.running = false;
+        this.laps = [];
+        this.intervalId = null;
+
+        this.display = document.getElementById('stopwatchTime');
+        this.startBtn = document.getElementById('startBtn');
+        this.pauseBtn = document.getElementById('pauseBtn');
+        this.resetBtn = document.getElementById('resetBtn');
+        this.lapBtn = document.getElementById('lapBtn');
+        this.lapsList = document.getElementById('lapsList');
+
+        this.startBtn.addEventListener('click', () => this.start());
+        this.pauseBtn.addEventListener('click', () => this.pause());
+        this.resetBtn.addEventListener('click', () => this.reset());
+        this.lapBtn.addEventListener('click', () => this.recordLap());
+    }
+
+    start() {
+        if (this.running) return;
+        this.running = true;
+        this.startTime = Date.now() - this.elapsedTime;
+
+        this.startBtn.disabled = true;
+        this.pauseBtn.disabled = false;
+        this.lapBtn.disabled = false;
+
+        this.intervalId = setInterval(() => this.updateDisplay(), 10);
+    }
+
+    pause() {
+        this.running = false;
+        clearInterval(this.intervalId);
+
+        this.startBtn.disabled = false;
+        this.pauseBtn.disabled = true;
+        this.lapBtn.disabled = true;
+    }
+
+    reset() {
+        this.running = false;
+        clearInterval(this.intervalId);
+        this.elapsedTime = 0;
+        this.laps = [];
+        this.display.textContent = '00:00:00';
+        this.lapsList.innerHTML = '<li class="empty">ラップタイムはまだ記録されていません</li>';
+
+        this.startBtn.disabled = false;
+        this.pauseBtn.disabled = true;
+        this.lapBtn.disabled = true;
+    }
+
+    recordLap() {
+        const lapTime = this.elapsedTime;
+        this.laps.push(lapTime);
+        this.renderLaps();
+    }
+
+    updateDisplay() {
+        this.elapsedTime = Date.now() - this.startTime;
+        const totalSeconds = Math.floor(this.elapsedTime / 1000);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+
+        this.display.textContent =
+            `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    renderLaps() {
+        if (this.laps.length === 0) {
+            this.lapsList.innerHTML = '<li class="empty">ラップタイムはまだ記録されていません</li>';
+            return;
+        }
+
+        this.lapsList.innerHTML = this.laps.map((lap, index) => {
+            const totalSeconds = Math.floor(lap / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            return `<li class="list-item"><div>ラップ ${index + 1}</div><div class="alarm-time">${time}</div></li>`;
+        }).join('');
+    }
+}
+
+function setupTabs() {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+        });
+    });
+}
+
 if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
 }
 
 const app = new AlarmApp();
+const stopwatch = new Stopwatch();
+setupTabs();

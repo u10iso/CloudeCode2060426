@@ -3,26 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>シンプルアラームアプリ</title>
+    <title>アラーム & ストップウォッチ</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>⏰ アラーム</h1>
+        <h1>⏰ アラーム & ⏱️ ストップウォッチ</h1>
 
-        <div class="alarm-setup">
-            <div class="input-group">
-                <label for="alarmTime">時刻を選択:</label>
-                <input type="time" id="alarmTime">
-            </div>
-            <button id="setBtn" class="btn btn-primary">アラームを設定</button>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="alarm">アラーム</button>
+            <button class="tab-btn" data-tab="stopwatch">ストップウォッチ</button>
         </div>
 
-        <div class="alarms-list">
-            <h2>設定済みアラーム</h2>
-            <ul id="alarmsList" class="list">
-                <li class="empty">アラームはまだ設定されていません</li>
-            </ul>
+        <div id="alarm" class="tab-content active">
+            <div class="alarm-setup">
+                <div class="input-group">
+                    <label for="alarmTime">時刻を選択:</label>
+                    <input type="time" id="alarmTime">
+                </div>
+                <button id="setBtn" class="btn btn-primary">アラームを設定</button>
+            </div>
+
+            <div class="alarms-list">
+                <h2>設定済みアラーム</h2>
+                <ul id="alarmsList" class="list">
+                    <li class="empty">アラームはまだ設定されていません</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="stopwatch" class="tab-content">
+            <div class="stopwatch-display">
+                <div class="time-display" id="stopwatchTime">00:00:00</div>
+            </div>
+
+            <div class="stopwatch-controls">
+                <button id="startBtn" class="btn btn-primary">開始</button>
+                <button id="pauseBtn" class="btn btn-secondary" disabled>一時停止</button>
+                <button id="resetBtn" class="btn btn-danger">リセット</button>
+            </div>
+
+            <div class="laps">
+                <h2>ラップタイム</h2>
+                <button id="lapBtn" class="btn btn-secondary" disabled>ラップ記録</button>
+                <ul id="lapsList" class="list">
+                    <li class="empty">ラップタイムはまだ記録されていません</li>
+                </ul>
+            </div>
         </div>
     </div>
 
