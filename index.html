@@ -8,6 +8,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            background: linear-gradient(-45deg, #ff6b35, #f7931e, #fdb833, #f37335, #ff6b35) !important;
+            background-size: 400% 400% !important;
+            animation: bgShift 8s ease infinite !important;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .container {
+            box-shadow: 0 30px 80px rgba(255, 107, 53, 0.4) !important;
+        }
+        h1 {
+            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #fdb833 100%) !important;
+            font-size: 48px !important;
+            text-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
