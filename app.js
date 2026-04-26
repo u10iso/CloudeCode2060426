@@ -269,7 +269,44 @@ if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
 }
 
+class Pokemon {
+    constructor() {
+        this.randomBtn = document.getElementById('randomBtn');
+        this.nameEl = document.getElementById('pokemonName');
+        this.imageEl = document.getElementById('pokemonImage');
+        this.typesEl = document.getElementById('pokemonTypes');
+        this.heightEl = document.getElementById('pokemonHeight');
+        this.weightEl = document.getElementById('pokemonWeight');
+
+        this.randomBtn.addEventListener('click', () => this.fetchRandomPokemon());
+        this.fetchRandomPokemon();
+    }
+
+    fetchRandomPokemon() {
+        const randomId = Math.floor(Math.random() * 898) + 1;
+        fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`)
+            .then(response => response.json())
+            .then(data => this.displayPokemon(data))
+            .catch(error => console.error('Pokemon fetch error:', error));
+    }
+
+    displayPokemon(data) {
+        const name = data.name;
+        const image = data.sprites.official-artwork?.front_default || data.sprites.front_default;
+        const types = data.types.map(t => t.type.name);
+        const height = (data.height / 10).toFixed(1) + ' m';
+        const weight = (data.weight / 10).toFixed(1) + ' kg';
+
+        this.nameEl.textContent = name;
+        this.imageEl.innerHTML = `<img src="${image}" alt="${name}">`;
+        this.typesEl.innerHTML = types.map(type => `<span class="pokemon-type">${type}</span>`).join('');
+        this.heightEl.textContent = height;
+        this.weightEl.textContent = weight;
+    }
+}
+
 const app = new AlarmApp();
 const stopwatch = new Stopwatch();
 const weather = new Weather();
+const pokemon = new Pokemon();
 setupTabs();

@@ -23,6 +23,7 @@
         <div class="tabs">
             <button class="tab-btn active" data-tab="alarm">Alarm</button>
             <button class="tab-btn" data-tab="stopwatch">Stopwatch</button>
+            <button class="tab-btn" data-tab="pokemon">Pokemon</button>
         </div>
 
         <div id="alarm" class="tab-content active">
@@ -60,6 +61,27 @@
                     <li class="empty">No laps recorded</li>
                 </ul>
             </div>
+        </div>
+
+        <div id="pokemon" class="tab-content">
+            <div class="pokemon-card">
+                <div class="pokemon-image" id="pokemonImage"></div>
+                <div class="pokemon-info">
+                    <h2 id="pokemonName">--</h2>
+                    <div class="pokemon-types" id="pokemonTypes"></div>
+                    <div class="pokemon-stats">
+                        <div class="stat">
+                            <span class="stat-name">Height</span>
+                            <span class="stat-value" id="pokemonHeight">--</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-name">Weight</span>
+                            <span class="stat-value" id="pokemonWeight">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button id="randomBtn" class="btn btn-primary">Random Pokemon</button>
         </div>
     </div>
 
