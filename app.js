@@ -19,7 +19,7 @@ class AlarmApp {
     addAlarm() {
         const time = this.timeInput.value;
         if (!time) {
-            alert('時刻を選択してください');
+            alert('Please select a time');
             return;
         }
 
@@ -86,9 +86,8 @@ class AlarmApp {
 
     showNotification() {
         if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('アラーム', {
-                body: 'アラームが鳴っています！',
-                icon: '⏰'
+            new Notification('Alarm', {
+                body: 'Your alarm is ringing'
             });
         }
     }
@@ -106,7 +105,7 @@ class AlarmApp {
 
     render() {
         if (this.alarms.length === 0) {
-            this.alarmsList.innerHTML = '<li class="empty">アラームはまだ設定されていません</li>';
+            this.alarmsList.innerHTML = '<li class="empty">No alarms set</li>';
             return;
         }
 
@@ -115,8 +114,8 @@ class AlarmApp {
         this.alarmsList.innerHTML = sorted.map(alarm => `
             <li class="list-item">
                 <div class="alarm-time">${alarm.time}</div>
-                <div class="alarm-status">${alarm.enabled ? '有効' : '完了'}</div>
-                <button class="btn btn-delete" onclick="app.deleteAlarm(${alarm.id})">削除</button>
+                <div class="alarm-status">${alarm.enabled ? 'Active' : 'Done'}</div>
+                <button class="btn btn-delete" onclick="app.deleteAlarm(${alarm.id})">Delete</button>
             </li>
         `).join('');
     }
@@ -170,7 +169,7 @@ class Stopwatch {
         this.elapsedTime = 0;
         this.laps = [];
         this.display.textContent = '00:00:00';
-        this.lapsList.innerHTML = '<li class="empty">ラップタイムはまだ記録されていません</li>';
+        this.lapsList.innerHTML = '<li class="empty">No laps recorded</li>';
 
         this.startBtn.disabled = false;
         this.pauseBtn.disabled = true;
@@ -196,7 +195,7 @@ class Stopwatch {
 
     renderLaps() {
         if (this.laps.length === 0) {
-            this.lapsList.innerHTML = '<li class="empty">ラップタイムはまだ記録されていません</li>';
+            this.lapsList.innerHTML = '<li class="empty">No laps recorded</li>';
             return;
         }
 
@@ -206,7 +205,7 @@ class Stopwatch {
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = totalSeconds % 60;
             const time = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            return `<li class="list-item"><div>ラップ ${index + 1}</div><div class="alarm-time">${time}</div></li>`;
+            return `<li class="list-item"><div>Lap ${index + 1}</div><div class="alarm-time">${time}</div></li>`;
         }).join('');
     }
 }

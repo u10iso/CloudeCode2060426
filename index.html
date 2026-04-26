@@ -1,63 +1,33 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>アラーム & ストップウォッチ</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Alarm & Stopwatch</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        body {
-            background: linear-gradient(-45deg, #ff6b35, #f7931e, #fdb833, #f37335, #ff6b35) !important;
-            background-size: 400% 400% !important;
-            animation: bgShift 8s ease infinite !important;
-        }
-        @keyframes bgShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .container {
-            box-shadow: 0 30px 80px rgba(255, 107, 53, 0.4) !important;
-        }
-        h1 {
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #fdb833 100%) !important;
-            font-size: 48px !important;
-            text-shadow: 0 4px 15px rgba(255, 107, 53, 0.3) !important;
-        }
-    </style>
 </head>
-<body style="background: linear-gradient(-45deg, #ff6b35, #f7931e, #fdb833, #f37335, #ff6b35) !important; background-size: 400% 400% !important; animation: bgShift 8s ease infinite !important;">
-    <style>
-        @keyframes bgShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-    </style>
+<body>
     <div class="container">
-        <h1>⏰ アラーム & ⏱️ ストップウォッチ</h1>
+        <h1>Alarm & Stopwatch</h1>
 
         <div class="tabs">
-            <button class="tab-btn active" data-tab="alarm">アラーム</button>
-            <button class="tab-btn" data-tab="stopwatch">ストップウォッチ</button>
+            <button class="tab-btn active" data-tab="alarm">Alarm</button>
+            <button class="tab-btn" data-tab="stopwatch">Stopwatch</button>
         </div>
 
         <div id="alarm" class="tab-content active">
             <div class="alarm-setup">
                 <div class="input-group">
-                    <label for="alarmTime">時刻を選択:</label>
+                    <label for="alarmTime">Time</label>
                     <input type="time" id="alarmTime">
                 </div>
-                <button id="setBtn" class="btn btn-primary">アラームを設定</button>
+                <button id="setBtn" class="btn btn-primary">Set Alarm</button>
             </div>
 
             <div class="alarms-list">
-                <h2>設定済みアラーム</h2>
+                <h2>Alarms</h2>
                 <ul id="alarmsList" class="list">
-                    <li class="empty">アラームはまだ設定されていません</li>
+                    <li class="empty">No alarms set</li>
                 </ul>
             </div>
         </div>
@@ -68,16 +38,16 @@
             </div>
 
             <div class="stopwatch-controls">
-                <button id="startBtn" class="btn btn-primary">開始</button>
-                <button id="pauseBtn" class="btn btn-secondary" disabled>一時停止</button>
-                <button id="resetBtn" class="btn btn-danger">リセット</button>
+                <button id="startBtn" class="btn btn-primary">Start</button>
+                <button id="pauseBtn" class="btn btn-secondary" disabled>Pause</button>
+                <button id="resetBtn" class="btn btn-danger">Reset</button>
             </div>
 
             <div class="laps">
-                <h2>ラップタイム</h2>
-                <button id="lapBtn" class="btn btn-secondary" disabled>ラップ記録</button>
+                <h2>Laps</h2>
+                <button id="lapBtn" class="btn btn-secondary" disabled>Record Lap</button>
                 <ul id="lapsList" class="list">
-                    <li class="empty">ラップタイムはまだ記録されていません</li>
+                    <li class="empty">No laps recorded</li>
                 </ul>
             </div>
         </div>
