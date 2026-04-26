@@ -201,6 +201,7 @@ input[type="time"]:focus {
     margin-bottom: 40px;
     border-bottom: 1px solid #e5e5e5;
     padding-bottom: 0;
+    flex-wrap: wrap;
 }
 
 .tab-btn {
